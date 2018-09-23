@@ -1,0 +1,69 @@
+Sub stock_totalvols():
+
+'Defining all variables
+Dim ws As Worksheet
+
+Dim i As Double
+Dim stk_name As String
+Dim stk_next As String
+Dim stk_tot As Double
+Dim position As Integer
+Dim LastRow As Double
+Dim open As String
+Dim open_next As Double
+Dim close As String
+Dim close_next As Double
+Dim yearly_change As Double
+Dim percent_change As Double
+
+'Loop through all worksheets
+For Each ws In Worksheets
+
+    'Column headers
+    ws.Range("I1").Value = "Ticker"
+    ws.Range("J1").Value = "Yearly Change"
+    ws.Range("K1").Value = "Percent Change"
+    ws.Range("L1").Value = "Total Stock Volume"
+    
+
+    ' Defining functions
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    position = 1
+
+    'loop through worksheet
+    For i = 2 To LastRow
+
+        stk_name = ws.Cells(i, 1).Value
+        stk_next = ws.Cells(i + 1, 1).Value
+        stk_tot = stk_tot+ ws.Cells(i, 7).Value
+   
+        open = ws.Cells(i, 3).Value
+        close = ws.Cells(i, 6).Value
+        yearly_change = close - open
+        yearly_change = yearly_change + ws.Cells(i, 10).Value
+   
+        percent_change = yearly_change + ws.Cells(i, 11).Value
+        ws.Cells(i, 11).NumberFormat = "00.0%"
+
+        If stk_name <> stk_next Then
+          ws.Cells(position + 1, 9).Value  = stk_name
+          ws.Cells(position + 1, 12).Value = stk_tot
+          ws.Cells(position + 1, 10).Value = yearly_change
+          ws.Cells(position + 1, 11).Value = percent_change
+          position = position + 1
+          stk_tot = ws.Cells(i + 1, 7).Value
+
+            If yearly_change > 0 Then
+               ws.Cells(position + 1, 10).Interior.ColorIndex = 4
+            Else
+               ws.Cells(position + 1, 10).Interior.ColorIndex = 3
+
+            End If
+
+        End If
+
+    Next i
+    
+Next ws
+
+End Sub
